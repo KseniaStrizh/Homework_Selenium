@@ -15,21 +15,28 @@ namespace Lesson2_Ex3
         [TestClass]
         public class OpenPageAndCloseIt
         {
-            public static ChromeDriver m_driver;
-            private string m_baseURL = "http://localhost:8080/litecart/admin";
+            public static ChromeDriver driver;
+            private string m_baseURL = "localhost:80/litecart/admin";
+            private const string m_expectedTitle = "My Store";
+            private const int timeout = 10;
+            private WebDriverWait wait;
+
+
             [TestInitialize]
             public void TestSetup()
             {
-                m_driver = new ChromeDriver();
+                driver = new ChromeDriver();
+                wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeout));
             }
 
             [TestMethod]
             public void GoToURL()
             {
-                m_driver.Navigate().GoToUrl(m_baseURL);
-                IWebElement Login = m_driver.FindElement(By.XPath(".//input[@name='username']"));
-                IWebElement Password = m_driver.FindElement(By.XPath(".//input[@name='password']"));
-                IWebElement LoginButton = m_driver.FindElement(By.XPath(".//button[@name='login']"));
+                driver.Navigate().GoToUrl(m_baseURL);
+                wait.Until(ExpectedConditions.TitleIs(m_expectedTitle));
+                IWebElement Login = driver.FindElement(By.XPath(".//input[@name='username']"));
+                IWebElement Password = driver.FindElement(By.XPath(".//input[@name='password']"));
+                IWebElement LoginButton = driver.FindElement(By.XPath(".//button[@name='login']"));
                 Login.SendKeys("admin");
                 Password.SendKeys("admin");
                 LoginButton.Click();
@@ -38,7 +45,8 @@ namespace Lesson2_Ex3
             [TestCleanup]
             public void QuitBrowser()
             {
-                m_driver.Quit();
+                driver.Quit();
+                driver = null;
             }
 
         }
