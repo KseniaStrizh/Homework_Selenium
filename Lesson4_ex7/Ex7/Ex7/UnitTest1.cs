@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 
-//Go through all the elements of the admin area
-namespace Lesson4_Ex7
+namespace Ex7
 {
     [TestClass]
     public class FindItemsCheckHeaders
@@ -19,19 +18,21 @@ namespace Lesson4_Ex7
         private const string ADMIN_LOGIN = "admin";
         private const string ADMIN_PASSWORD = "admin";
 
+
         [TestInitialize]
         public void TestSetup()
         {
             driver = new ChromeDriver();
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeout));
+            driver.Navigate().GoToUrl(m_baseURL);
+            //wait.Until(ExpectedConditions.TitleIs(m_expectedTitle));
+
         }
+
         public void ILoginAsAdminaAndIWaitAdminPanelLoad()
         {
-           try
+            try
             {
-                driver.Navigate().GoToUrl(m_baseURL);
-                wait.Until(ExpectedConditions.TitleIs(m_expectedTitle));
-               
                 IWebElement Login = driver.FindElement(By.XPath(".//input[@name='username']"));
                 IWebElement Password = driver.FindElement(By.XPath(".//input[@name='password']"));
                 IWebElement LoginButton = driver.FindElement(By.XPath(".//button[@name='login']"));
@@ -40,8 +41,8 @@ namespace Lesson4_Ex7
                 Password.SendKeys(ADMIN_PASSWORD);
                 LoginButton.Click();
                 //we wait that the administrator menu has been loaded
-                wait.Until(ExpectedConditions.ElementExist(By.XPath(".//div[@id='sidebar']")));
-                
+               // wait.Until(ExpectedConditions.ElementExists(By.XPath(".//div[@id='sidebar']")));
+
             }
             catch (Exception e)
             {
@@ -64,9 +65,10 @@ namespace Lesson4_Ex7
                 var allFirstLevelElements = driver.FindElements(By.XPath("ul//contains[@id='menu']/li"));
                 foreach (var item in allFirstLevelElements)
                 {
-                    listFirstLevelElements.Add(item.FindElement(By.XPath(".//a")).GetAttribute("href"));// or .value weshould get link
+                    listFirstLevelElements.Add(item.FindElement(By.XPath(".//a"))
+                        .GetAttribute("href")); // or .value weshould get link
                 }
-                
+
                 //now we shoul added second level elements
                 foreach (var secondLeveItem in listFirstLevelElements)
                 {
@@ -98,7 +100,7 @@ namespace Lesson4_Ex7
         }
 
         [ClassCleanup]
-        public void QuitBrowser()
+        public static void QuitBrowser()
         {
             driver.Quit();
             driver = null;
