@@ -11,7 +11,7 @@ namespace Ex7
     public class FindItemsCheckHeaders
     {
         public static ChromeDriver driver;
-        private string m_baseURL = "http://localhost:8080/litecart/admin";
+        private string m_baseURL = "http://localhost/litecart/public_html/admin";//удали public html
         private const string m_expectedTitle = "My Store";
         private const int timeout = 10;
         private WebDriverWait wait;
@@ -25,8 +25,8 @@ namespace Ex7
             driver = new ChromeDriver();
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeout));
             driver.Navigate().GoToUrl(m_baseURL);
-            //wait.Until(ExpectedConditions.TitleIs(m_expectedTitle));
-
+            driver.Manage().Window.Maximize();
+            wait.Until(ExpectedConditions.TitleIs(m_expectedTitle));
         }
 
         public void ILoginAsAdminaAndIWaitAdminPanelLoad()
@@ -40,9 +40,8 @@ namespace Ex7
                 Login.SendKeys(ADMIN_LOGIN);
                 Password.SendKeys(ADMIN_PASSWORD);
                 LoginButton.Click();
-                //we wait that the administrator menu has been loaded
-               // wait.Until(ExpectedConditions.ElementExists(By.XPath(".//div[@id='sidebar']")));
-
+                //we wait that the sitebar has been loaded
+                wait.Until(ExpectedConditions.ElementExists(By.XPath(".//div[@id='sidebar']")));
             }
             catch (Exception e)
             {
@@ -62,21 +61,22 @@ namespace Ex7
                 var listFirstLevelElements = new List<string>();
                 var listSecondLevelElements = new List<string>();
 
-                var allFirstLevelElements = driver.FindElements(By.XPath("ul//contains[@id='menu']/li"));
+                var allFirstLevelElements = driver.FindElements(By.XPath(".//ul[contains(@id,'menu')]//li"));
+                Console.WriteLine("I find first level elements and I take references to them");
+
                 foreach (var item in allFirstLevelElements)
                 {
-                    listFirstLevelElements.Add(item.FindElement(By.XPath(".//a"))
-                        .GetAttribute("href")); // or .value weshould get link
+                    listFirstLevelElements.Add(item.FindElement(By.XPath(".//a")).GetAttribute("href"));
                 }
 
-                //now we shoul added second level elements
+                //now we should added second level elements
                 foreach (var secondLeveItem in listFirstLevelElements)
                 {
                     driver.Navigate().GoToUrl(secondLeveItem);
-                    var element = driver.FindElements(By.XPath(".//h1"));
-                    Assert.IsTrue(element.Count > 0);
+                    var element_h1 = driver.FindElements(By.XPath(".//h1"));
+                    Assert.IsTrue(element_h1.Count > 0);
 
-                    var secondLevelElement = driver.FindElements(By.XPath(".//li[@id='app-']/ul//a"));
+                    var secondLevelElement = driver.FindElements(By.XPath(".//li[contains(@id,'app')]/ul//a"));
                     if (secondLevelElement.Count > 0)
                     {
                         foreach (var item in secondLevelElement)
@@ -89,7 +89,7 @@ namespace Ex7
                 foreach (var secondLevelElement in listSecondLevelElements)
                 {
                     driver.Navigate().GoToUrl(secondLevelElement);
-                    var element = driver.FindElements(By.XPath(".//h1"));
+                    var element = driver.FindElements(By.XPath(".//main[@id='main']/h1"));
                     Assert.IsTrue(element.Count > 0);
                 }
             }
