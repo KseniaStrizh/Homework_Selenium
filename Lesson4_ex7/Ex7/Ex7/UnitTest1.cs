@@ -11,7 +11,7 @@ namespace Ex7
     public class FindItemsCheckHeaders
     {
         public static ChromeDriver driver;
-        private string m_baseURL = "http://localhost/litecart/public_html/admin";//удали public html
+        private string m_baseURL = "http://localhost:8080/litecart/admin";
         private const string m_expectedTitle = "My Store";
         private const int timeout = 10;
         private WebDriverWait wait;
@@ -33,13 +33,13 @@ namespace Ex7
         {
             try
             {
-                IWebElement Login = driver.FindElement(By.XPath(".//input[@name='username']"));
-                IWebElement Password = driver.FindElement(By.XPath(".//input[@name='password']"));
-                IWebElement LoginButton = driver.FindElement(By.XPath(".//button[@name='login']"));
+                IWebElement login = driver.FindElement(By.XPath(".//input[@name='username']"));
+                IWebElement password = driver.FindElement(By.XPath(".//input[@name='password']"));
+                IWebElement loginButton = driver.FindElement(By.XPath(".//button[@name='login']"));
 
-                Login.SendKeys(ADMIN_LOGIN);
-                Password.SendKeys(ADMIN_PASSWORD);
-                LoginButton.Click();
+                login.SendKeys(ADMIN_LOGIN);
+                password.SendKeys(ADMIN_PASSWORD);
+                loginButton.Click();
                 //we wait that the sitebar has been loaded
                 wait.Until(ExpectedConditions.ElementExists(By.XPath(".//div[@id='sidebar']")));
             }
@@ -58,8 +58,8 @@ namespace Ex7
             }
             try
             {
-                var listFirstLevelElements = new List<string>();
-                var listSecondLevelElements = new List<string>();
+                var listFirstLevelElements = new List <string>();
+                var listSecondLevelElements = new List <string>();
 
                 var allFirstLevelElements = driver.FindElements(By.XPath(".//ul[contains(@id,'menu')]//li"));
                 Console.WriteLine("I find first level elements and I take references to them");
