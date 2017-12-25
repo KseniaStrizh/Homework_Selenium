@@ -13,7 +13,7 @@ namespace SeleniumTestProject
     public class Ex9
     {
         public static ChromeDriver driver;
-        private const string m_URLa = "http://localhost/litecart/admin/?app=countries&doc=countries";
+        private const string m_URLa = "http://localhost/litecart/admin/public_html/?app=countries&doc=countries";
 
         private const string m_expectedTitle = "Countries | My Store";
         private const int timeout = 10;

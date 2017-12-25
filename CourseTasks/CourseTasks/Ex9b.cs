@@ -15,7 +15,7 @@ namespace CourseTasks
     public class Ex9b
     {
         public static ChromeDriver driver;
-        private const string m_URLb = "http://localhost/litecart/admin/?app=geo_zones&doc=geo_zones";
+        private const string m_URLb = "http://localhost/litecart/admin/public_html/?app=geo_zones&doc=geo_zones";
 
         private const string m_expectedTitle = "Geo Zones | My Store";
         private const int timeout = 10;
