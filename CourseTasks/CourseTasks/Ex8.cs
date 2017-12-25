@@ -1,15 +1,15 @@
-﻿using System;
+﻿﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 
-namespace Lesson4_ex8
+namespace CourseTasks
 
 {
     [TestClass]
-    public class SeleniumTestProject
+    public class Ex8
     {
         public static ChromeDriver driver;
         private const string m_baseURL = "http://localhost:8084/litecart";

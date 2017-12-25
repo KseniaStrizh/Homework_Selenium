@@ -1,12 +1,11 @@
-﻿using System;
+﻿﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System.Collections.ObjectModel;
 
-namespace SeleniumTestProject
+namespace CourseTasks
 {
     [TestClass]
     public class Ex7
