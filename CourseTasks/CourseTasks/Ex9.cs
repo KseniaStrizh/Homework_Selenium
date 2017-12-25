@@ -13,7 +13,7 @@ namespace SeleniumTestProject
     public class Ex9
     {
         public static ChromeDriver driver;
-        private const string m_URLa = "http://localhost/litecart/admin/public_html/?app=countries&doc=countries";
+        private const string m_URLa = "http://localhost/litecart/admin/?app=countries&doc=countries";
 
         private const string m_expectedTitle = "Countries | My Store";
         private const int timeout = 10;
@@ -69,26 +69,31 @@ namespace SeleniumTestProject
                     if (AllZones[i].Text != "0")
                     {
                         NotZeroZones.Add(AllCountry[i].Text);
-                        string NotNullCountryName = Convert.ToString(AllCountry[i].Text);
-                        driver.FindElement(By.XPath($".//a[contains(text(),'{NotNullCountryName}')]")).Click();
-
-
-                        var subZones = driver.FindElements(By.XPath("//input[contains(@name, 'name')]/.."));
-
-                        foreach (var zone in subZones)
-                        {
-                            AllSubZoneText.Add(zone.GetAttribute("value"));
-                        }
-
-                        AllSubZoneSortedList = AllSubZoneText;
-                        AllSubZoneSortedList.Sort();
-                        Assert.AreEqual(AllSubZoneSortedList, AllSubZoneText);
-                        driver.FindElement(By.XPath(".//button[contains(@name,'cancel')]")).Click();
                     }
                 }
                 AllCountrySortedList = AllCountryText;
                 AllCountrySortedList.Sort();
                 Assert.AreEqual(AllCountrySortedList, AllCountryText);
+
+                for (int j = 0; j < NotZeroZones.Count; j++)
+                {
+                    string NotNullCountryName = Convert.ToString(NotZeroZones[j]);
+                    driver.FindElement(By.XPath($".//a[contains(text(),'{NotNullCountryName}')]")).Click();
+
+
+                    var subZones = driver.FindElements(By.XPath("//input[contains(@name, 'name')]/.."));
+
+                    foreach (var zone in subZones)
+                    {
+                        AllSubZoneText.Add(zone.GetAttribute("value"));
+                    }
+
+                    AllSubZoneSortedList = AllSubZoneText;
+                    AllSubZoneSortedList.Sort();
+                    Assert.AreEqual(AllSubZoneSortedList, AllSubZoneText);
+                    driver.FindElement(By.XPath(".//button[contains(@name,'cancel')]")).Click();
+                }
+                
             }
             catch (Exception e)
             {

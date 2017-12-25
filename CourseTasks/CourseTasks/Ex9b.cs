@@ -15,7 +15,7 @@ namespace CourseTasks
     public class Ex9b
     {
         public static ChromeDriver driver;
-        private const string m_URLb = "http://localhost/litecart/admin/public_html/?app=geo_zones&doc=geo_zones";
+        private const string m_URLb = "http://localhost/litecart/admin/?app=geo_zones&doc=geo_zones";
 
         private const string m_expectedTitle = "Geo Zones | My Store";
         private const int timeout = 10;
@@ -42,6 +42,7 @@ namespace CourseTasks
             password.SendKeys(ADMIN_PASSWORD);
             loginButton.Click();
             wait.Until(ExpectedConditions.TitleIs(m_expectedTitle));
+            Thread.Sleep(timeout);
         }
 
 
@@ -55,21 +56,21 @@ namespace CourseTasks
             }
             try
             {
-                var zones = driver.FindElements(By.XPath(".//tr[@class='row']/td[3]"));
+                var zones = driver.FindElements(By.XPath("//tbody//a[not (contains(@title,'Edit'))]"));
+                List<string> zonesList = new List<string>();
+                List<string> listSubZones = new List<string>();
 
                 for (var i = 0; i < zones.Count; i++)
                 {
-                    //link to zones
-                    zones = driver.FindElements(By.XPath(".//tr[@class='row']/td[3]/a"));
-                    Thread.Sleep(TimeSpan.FromSeconds(10));
+                    zonesList.Add(zones[i].Text);
                     zones[i].Click();
+                    Thread.Sleep(TimeSpan.FromSeconds(10));
 
-                    var subZones = driver.FindElements(By.XPath(".//tr[not(@class='header')]"));
-                    var listSubZones = new List<string>();
-                    for (var j = 0; j < subZones.Count; j++)
+                    var subzones = driver.FindElements(By.XPath(".//tbody/tr/td[last()-1]"));
+
+                    for (var j = 0; j < subzones.Count; j++)
                     {
-                        subZones = driver.FindElements(By.XPath(".//tr[not(@class='header')]"));
-                        listSubZones.Add(subZones[i].Text);
+                      listSubZones.Add(subzones[j].Text);
                     }
                     
                     var inputList = listSubZones;
@@ -77,6 +78,8 @@ namespace CourseTasks
                     Assert.AreEqual(listSubZones, inputList);
 
                     driver.FindElement(By.XPath(".//button[contains(@name,'cancel')]")).Click();
+                    Thread.Sleep(TimeSpan.FromSeconds(10));
+
                 }
             }
             catch (Exception e)
