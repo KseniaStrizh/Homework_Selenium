@@ -13,32 +13,24 @@ namespace CourseTasks
     [TestClass]
     public class Ex10
     {
-        //public static ChromeDriver driver;
-        private const string URL = "http://localhost:8084/litecart";
+
+        private const string URL = "http://localhost/litecart/public_html/en/";//"http://localhost:8084/litecart/public_html";
         private const string m_expectedTitle = "My Store | Online Store";
         private const int timeout = 10;
-        private const string BROWSERNAME = "Firefox";
+        private const string BROWSERNAME = "Chrome";
         private IWebDriver driver;
         private WebDriverWait wait;
 
         #region repoElement
-        public string repoProduct => $".//div[contains(@class,'products')]/div";
         public string repoProductSticker => $".//div[contains(@class,'sticker')]";
-
+        public string repoDuck => $".//div[contains(@id,'campaign')]//div[contains(@class,'product column')]";
+        public string repoDuckPrice => $"{repoDuck}//div[@class='price-wrapper']";
+        public string repoDuckPage => $".//div[@id='box-product']";
+        public string repoDuckPriceOnProductPage => $"{repoDuckPage}//div[contains(@class,'price-wrapper')]";
         #endregion
-        public class GoodsPrice
-        {
-           
-            public int Size { get; set; }
-            public string Style { get; set; }
-        }
 
-        public class Goods
-        {
-            public string URL { get; set; }
-            public string Name { get; set; }
-        }
 
+      
         public void TestInit()
         {
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeout));
@@ -76,23 +68,39 @@ namespace CourseTasks
         public void ValidateAllProfuctParametr()
 
         {
-          TestSetup(BROWSERNAME);
-          TestInit();
+            TestSetup(BROWSERNAME);
+            TestInit();
+            //I get duck in campaign and get its parametrs
+            IWebElement FirstGoodsInCampaign = driver.FindElement(By.XPath(repoDuck));
+            IWebElement FirstGoodsInCampaignPrice = driver.FindElement(By.XPath(repoDuckPrice));
 
-            var listofProducts = new List<Goods>();
-            var productList = driver.FindElements(By.XPath(".//li[contains(@class,'product column')]"));
+            //Duck parametr on campaign page 
+            var url = FirstGoodsInCampaign.FindElement(By.XPath(".//a"));
+            var name = FirstGoodsInCampaign.FindElement(By.XPath(".//div[@class='name']"));
+            var manufacturer = FirstGoodsInCampaign.FindElement(By.XPath(".//div[@class='manufacturer']"));
+            var price = FirstGoodsInCampaignPrice.FindElement(By.XPath(".//s"));
+            var saleprice = FirstGoodsInCampaignPrice.FindElement(By.XPath(".//strong"));
 
-            foreach (var product in productList)
-            {
-                var url = product.FindElement(By.XPath(".//a"));
-                var name = product.FindElement(By.XPath(".//div[@class='name']"));
-                var manufacturer = product.FindElement(By.XPath(".//div[@class='manufacturer']"));
-              //различия  var price = product.FindElements(By.XPath(".//span[contains(@class,'price')]"));
-                var saleprice = product.FindElements(By.XPath(".//strong[contains(@class,'price')]"));
+            //I go to product page
+            FirstGoodsInCampaign.Click();
 
-            }
+            IWebElement DuckOnProductPage = driver.FindElement(By.XPath(repoDuckPage));
+            var nameOnProductPage = DuckOnProductPage.FindElement(By.XPath(".//h1"));
+            var manufacturerOnProductPage = DuckOnProductPage.FindElement(By.XPath(".//div[@class='manufacturer']//img"));
+            var priceOnProductPage = DuckOnProductPage.FindElement(By.XPath(".//del"));
+            
 
-            }
+            #region I validate product name
+            Assert.AreEqual(name.Text, nameOnProductPage.Text);
+            Console.WriteLine($"Name on campaign page{name.Text} name on product page {nameOnProductPage.Text}");
+            #endregion
 
+            #region I validate price
+            Assert.AreEqual(price.Text, priceOnProductPage.Text);
+            Console.WriteLine($"Name on campaign page{name.Text} name on product page {nameOnProductPage.Text}");
+            #endregion
+
+
+        }
     }
 }
