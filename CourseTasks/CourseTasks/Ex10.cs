@@ -14,7 +14,7 @@ namespace CourseTasks
     public class Ex10
     {
 
-        private const string URL = "http://localhost/litecart/public_html/en/";//"http://localhost:8084/litecart/public_html";
+        private const string URL = "http://localhost/litecart/en/";
         private const string m_expectedTitle = "My Store | Online Store";
         private const int timeout = 10;
         private const string BROWSERNAME = "Chrome";
