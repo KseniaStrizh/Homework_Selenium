@@ -6,7 +6,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Support.UI;
-
+using System.Threading;
 
 namespace CourseTasks
 {
@@ -62,44 +62,108 @@ namespace CourseTasks
 
             Assert.Fail("Browser does not supported");
         }
-        //а) на главной странице и на странице товара совпадает текст названия товара
 
+        public void CheckIfGrey(string color)
+        {
+            color = color.Split('(')[1]; IList<string> rgba = color.Substring(0, color.Length - 1).Split(',');
+            rgba[1] = rgba[1].Trim();
+            rgba[2] = rgba[2].Trim();
+            Assert.IsTrue((rgba[0] == rgba[1]) && (rgba[1] == rgba[2]) && (rgba[2] == rgba[0]));
+            Console.WriteLine("Price color is grey - all components are equale");
+        }
+
+        public void CheckIfRed(string color)
+        {
+            color = color.Split('(')[1]; IList<string> rgba = color.Substring(0, color.Length - 1).Split(',');
+            rgba[1] = rgba[1].Trim();
+            rgba[2] = rgba[2].Trim();
+            Assert.IsTrue((rgba[1] == "0") && (rgba[2] == "0"), "Campaign price is  red.");
+        }
         [TestMethod]
         public void ValidateAllProfuctParametr()
 
         {
             TestSetup(BROWSERNAME);
             TestInit();
+            #region Duck parametr on CAMPAIGN PAGE
             //I get duck in campaign and get its parametrs
             IWebElement FirstGoodsInCampaign = driver.FindElement(By.XPath(repoDuck));
             IWebElement FirstGoodsInCampaignPrice = driver.FindElement(By.XPath(repoDuckPrice));
 
             //Duck parametr on campaign page 
-            var url = FirstGoodsInCampaign.FindElement(By.XPath(".//a"));
-            var name = FirstGoodsInCampaign.FindElement(By.XPath(".//div[@class='name']"));
-            var manufacturer = FirstGoodsInCampaign.FindElement(By.XPath(".//div[@class='manufacturer']"));
-            var price = FirstGoodsInCampaignPrice.FindElement(By.XPath(".//s"));
-            var saleprice = FirstGoodsInCampaignPrice.FindElement(By.XPath(".//strong"));
+            var NameCampaignPage = FirstGoodsInCampaign.FindElement(By.XPath(".//div[@class='name']"));
+            var PriceCampaignPage = FirstGoodsInCampaignPrice.FindElement(By.XPath(".//s"));
+            var SalesPriceCampaignPage = FirstGoodsInCampaignPrice.FindElement(By.XPath(".//strong"));
 
+            //styles - standart price - on site its called - regulare
+            var FontPriceCampaignPage = PriceCampaignPage.GetCssValue("font-weight");
+            var ColorPriceCampaignPage = PriceCampaignPage.GetCssValue("color");
+            var DecorationPriceCampaignPage = PriceCampaignPage.GetCssValue("text-decoration");
+
+            //styles - sales(discount) price - on site its called - campaign
+            string FontSalesPrice = SalesPriceCampaignPage.GetCssValue("font-weight");
+            string ColorsalesPrice = SalesPriceCampaignPage.GetCssValue("color");
+            string DecorationSalesPrice = SalesPriceCampaignPage.GetCssValue("text-decoration");
+            #endregion
+
+            #region Validate Color
+            CheckIfGrey(ColorPriceCampaignPage);
+            CheckIfRed(ColorsalesPrice);
+            #endregion
             //I go to product page
+            Thread.Sleep(timeout);
             FirstGoodsInCampaign.Click();
 
+            #region Duck parametr on product page
+            //Duck parametr on product page
             IWebElement DuckOnProductPage = driver.FindElement(By.XPath(repoDuckPage));
-            var nameOnProductPage = DuckOnProductPage.FindElement(By.XPath(".//h1"));
-            var manufacturerOnProductPage = DuckOnProductPage.FindElement(By.XPath(".//div[@class='manufacturer']//img"));
-            var priceOnProductPage = DuckOnProductPage.FindElement(By.XPath(".//del"));
-            
+
+            var NameOnProductPage = DuckOnProductPage.FindElement(By.XPath(".//h1"));
+            var PriceOnProductPage = DuckOnProductPage.FindElement(By.XPath(".//del"));
+            var SalePriceOnProductPage = DuckOnProductPage.FindElement(By.XPath(".//strong"));
+
+            //styles - standart price - on product page
+
+            string FontPriceProductPage = PriceOnProductPage.GetCssValue("font-weight");
+            string ColorPriceProductPage = PriceOnProductPage.GetCssValue("color");
+            string DecorationPriceProductPage = PriceOnProductPage.GetCssValue("text-decoration");
+            //styles - sales price - on product page
+
+            string FontSalesPriceProductPage = SalePriceOnProductPage.GetCssValue("font-weight");
+            string ColorSalesPriceProductPage = SalePriceOnProductPage.GetCssValue("color");
+            string DecorationSalesPriceProductPage = SalePriceOnProductPage.GetCssValue("text-decoration");
+            #endregion
+
+            #region  Validate  price color
+            CheckIfGrey(ColorPriceProductPage);
+            CheckIfRed(ColorSalesPriceProductPage);
+            #endregion
 
             #region I validate product name
-            Assert.AreEqual(name.Text, nameOnProductPage.Text);
-            Console.WriteLine($"Name on campaign page{name.Text} name on product page {nameOnProductPage.Text}");
+            Assert.AreEqual(NameCampaignPage.Text, NameOnProductPage.Text);
+            Console.WriteLine($"Name on campaign page{NameCampaignPage.Text} name on product page {NameOnProductPage.Text}");
             #endregion
 
-            #region I validate price
-            Assert.AreEqual(price.Text, priceOnProductPage.Text);
-            Console.WriteLine($"Name on campaign page{name.Text} name on product page {nameOnProductPage.Text}");
+            #region I validate  standart price
+            Assert.AreEqual(PriceCampaignPage.Text, PriceOnProductPage.Text);
+            Console.WriteLine($"Price on campaign page {PriceCampaignPage.Text} price on product page {PriceOnProductPage.Text}");
             #endregion
 
+            #region I validate sales price
+            Assert.AreEqual(SalesPriceCampaignPage.Text, SalePriceOnProductPage.Text);
+            Console.WriteLine($"Sales price on campaign page {SalesPriceCampaignPage.Text} price on product page {SalePriceOnProductPage.Text}");
+            #endregion
+
+            #region I validate sales price bigger than regular price on both pages
+            if ((int.Parse(FontSalesPrice) > int.Parse(FontPriceCampaignPage)) & (int.Parse(FontSalesPriceProductPage) > int.Parse(FontPriceProductPage)))
+
+                Console.WriteLine("Validation that sales price bigger that regular price on both pages - SUCCEDED");
+
+            else
+                Assert.Fail("Validation failed");
+
+
+            #endregion
 
         }
     }
