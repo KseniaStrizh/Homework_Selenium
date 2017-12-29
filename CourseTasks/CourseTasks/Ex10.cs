@@ -109,7 +109,7 @@ namespace CourseTasks
             foreach (var duck in AllDucks)
             {
                 #region Duck parametr on CAMPAIGN PAGE
-                if (!IsElementPresent(By.XPath(".//span[@class='price']")))
+                if (IsElementPresent(By.XPath(".//span[@class='price']")))
                 {
                     var DuckName = duck.FindElement(By.XPath(".//div[@class='name']"));
                     //we validate text and standart price only  var
