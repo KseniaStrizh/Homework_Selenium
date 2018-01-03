@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Ex10.cs" />
     <Compile Include="Ex11.cs" />
+    <Compile Include="Ex12.cs" />
     <Compile Include="Ex7.cs" />
     <Compile Include="Ex8.cs" />
     <Compile Include="Ex9.cs" />
@@ -76,6 +77,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="input\gift.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
