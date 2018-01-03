@@ -16,7 +16,7 @@ namespace CourseTasks
     [TestClass]
     public class Ex11
     {
-        private const string URL = "http://localhost/litecart/public_html/en/create_account";
+        private const string URL = "http://localhost/litecart/en/create_account";
         private const string m_expectedTitle = "Create Account | My Store";
         private const int timeout = 10;
         private const string BROWSERNAME = "Chrome";
