@@ -1,13 +1,12 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NUnit.Framework;
 using System.Collections.Generic;
+using NUnit.Framework;
+using System.IO;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-
-using OpenQA.Selenium.Firefox;
-using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Support.UI;
+
 using System.Threading;
 using OpenQA.Selenium.Interactions;
 
@@ -31,12 +30,33 @@ namespace CourseTasks
         public string AddNewProduct = $".//a[contains(@href,'edit_product')]";
         public string Name = $".//label[text()='Name']/..//input";
         public string Code = $".//label[text()='Code']/..//input";
+        public string StatusEnable = $".//input[@name='status' and @value = '1']";
+        public string Quantity = $".//label[text()='Quantity']/..//div/input[@type='number']";
+        public string DateValidFrom = $".//label[text()='Date Valid From']/..//input";
+        public string DateValidTo = $".//label[text()='Date Valid To']/..//input";
+        public string NewImages = $".//input[contains(@name,'new_images')]";
+        //Information tab
+        public string InformationBtn = $".//a[text()='Information']";
+        public string Keywords = $".//input[@name='keywords']";
+        public string ShortDescription = $".//input[@name='short_description[en]']";
+        public string Description = $".//textarea[contains(@name,'description')]";
+        public string Attributes = $".//textarea[contains(@name,'attributes')]";
+        //Price Tab
+        public string PriceBtn = $".//a[text()='Prices']";
+
+
+
         #endregion
 
+        public static string ProductNameGenerator()
+        {
+            return "Name" + new Random().Next(1000, 9999);
+        }
         public static string ProductCodeGenerator()
         {
-            return "c" + new Random().Next(1000, 9999);
+            return "code" + new Random().Next(1000, 9999);
         }
+
         [TestInitialize]
         public void TestSetup()
 
@@ -61,16 +81,55 @@ namespace CourseTasks
             loginButton.Click();
             Thread.Sleep(10000);
 
-            var count = driver.FindElements(By.CssSelector(".dataTable .row")).Count;
+            int count = driver.FindElements(By.CssSelector(".dataTable .row")).Count;
             driver.FindElement(By.XPath(AddNewProduct)).Click();
 
             Thread.Sleep(10000);
-
-            driver.FindElement(By.XPath(Name)).SendKeys("ProductName");
+            string NameValue = ProductNameGenerator();
+            driver.FindElement(By.XPath(Name)).SendKeys(NameValue);
 
             string CodeValue = ProductCodeGenerator();
             driver.FindElement(By.XPath(Code)).SendKeys(CodeValue);
 
+            driver.FindElement(By.XPath(Quantity)).SendKeys("10");
+            driver.FindElement(By.XPath(DateValidFrom)).SendKeys("01.01.2018");
+            driver.FindElement(By.XPath(DateValidTo)).SendKeys("31.12.2018");
+            var path = Directory.GetCurrentDirectory() + @"\input\gift.jpg";
+            driver.FindElement(By.XPath(NewImages)).SendKeys(path);
+
+            //Information Tab
+            driver.FindElement(By.XPath(InformationBtn)).Click();
+            Thread.Sleep(10000);
+            var select = new SelectElement(driver.FindElement(By.Name("manufacturer_id")));
+            select.SelectByIndex(1);
+            driver.FindElement(By.XPath(Keywords)).SendKeys("Keywords");
+            driver.FindElement(By.XPath(ShortDescription)).SendKeys("Short Description");
+            driver.FindElement(By.XPath(Description)).SendKeys("Description");
+            driver.FindElement(By.XPath(Attributes)).SendKeys("Attributes");
+
+            //Prices Tab
+            driver.FindElement(By.XPath(PriceBtn)).Click();
+            Thread.Sleep(10000);
+
+            var price = driver.FindElement(By.Name("purchase_price"));
+            price.Clear();
+            price.SendKeys("100");
+
+            var currency = new SelectElement(driver.FindElement(By.Name("purchase_price_currency_code")));
+            currency.SelectByIndex(2);
+
+            driver.FindElement(By.Name("save")).Click();
+            var updatedTableRows = driver.FindElements(By.ClassName("row")).Count;
+            NUnit.Framework.Assert.True((count + 1) == updatedTableRows);
+
+
         }
+        [ClassCleanup]
+        public static void QuitBrowser()
+        {
+            driver.Quit();
+            driver = null;
+        }
+
     }
 }
