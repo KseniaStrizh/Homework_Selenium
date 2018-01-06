@@ -87,15 +87,15 @@ namespace CourseTasks
         }
 
         public string GetTextDecorationValue(IWebElement duckPrice)
+            // decoration can't be empty
+            //
         {
-            if (duckPrice.GetCssValue("text-decoration-line") != "")
-            {
-                return duckPrice.GetCssValue("text-decoration-line");
-            }
-            else
+            if (duckPrice.GetCssValue("text-decoration") != null)
             {
                 return duckPrice.GetCssValue("text-decoration");
             }
+            else
+                return string.Empty;
         }
 
         [TestMethod]
