@@ -1,14 +1,12 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using NUnit.Framework;
 using System.IO;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 
 using System.Threading;
-using OpenQA.Selenium.Interactions;
+
 
 namespace CourseTasks
 {
@@ -16,7 +14,7 @@ namespace CourseTasks
     public class Ex12
     {
 
-        private const string URL = "http://localhost/litecart/admin/?app=catalog&doc=catalog";
+        private const string URL = "http://localhost/litecart/public_html/admin/?app=catalog&doc=catalog";
        
         private const int timeout = 10;
         private const string BROWSERNAME = "Chrome";
@@ -56,6 +54,10 @@ namespace CourseTasks
         {
             return "code" + new Random().Next(1000, 9999);
         }
+        public static void IsElementPresent(string xpath)
+        {
+            Assert.IsTrue(driver.FindElements(By.XPath(xpath)).Count > 0); 
+        }
 
         [TestInitialize]
         public void TestSetup()
@@ -81,7 +83,6 @@ namespace CourseTasks
             loginButton.Click();
             Thread.Sleep(10000);
 
-            int count = driver.FindElements(By.CssSelector(".dataTable .row")).Count;
             driver.FindElement(By.XPath(AddNewProduct)).Click();
 
             Thread.Sleep(10000);
@@ -116,11 +117,13 @@ namespace CourseTasks
             price.SendKeys("100");
 
             var currency = new SelectElement(driver.FindElement(By.Name("purchase_price_currency_code")));
-            currency.SelectByIndex(2);
+            currency.SelectByValue("EUR");
 
             driver.FindElement(By.Name("save")).Click();
-            var updatedTableRows = driver.FindElements(By.ClassName("row")).Count;
-            NUnit.Framework.Assert.True((count + 1) == updatedTableRows);
+            Thread.Sleep(10000);
+
+            //check new product
+            IsElementPresent(".//a[text() = '" + NameValue + "']");
 
 
         }
