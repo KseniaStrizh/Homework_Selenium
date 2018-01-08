@@ -34,7 +34,7 @@ namespace CourseTasks
         public string closeBtn => $".//button[contains(@class,'close-icon')]";
         public string CheckOutBtn => $".//div[@class='title']";
         public string RemoveBtn => $".//button[@title='Remove']";
-        public string EmptyCartLabel => $".//p/em";
+        public string EmptyCartLabel => $".//p/em[text()='There are no items in your cart.']";
         #endregion
 
         [FindsBy(How = How.CssSelector, Using = "td.item")]
