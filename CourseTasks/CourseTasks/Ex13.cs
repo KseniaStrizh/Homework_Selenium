@@ -17,7 +17,7 @@ namespace CourseTasks
     [TestClass]
     public class Ex13
     {
-        private const string URL = "http://localhost/litecart/en/";
+        private const string URL = "http://localhost/litecart/public_html/en/";
 
         private const int timeout = 10;
         private const string BROWSERNAME = "Chrome";
@@ -35,6 +35,7 @@ namespace CourseTasks
         public string CheckOutBtn => $".//div[@class='title']";
         public string RemoveBtn => $".//button[@title='Remove']";
         public string EmptyCartLabel => $".//p/em[text()='There are no items in your cart.']";
+        public string OrderConfirmationWrapper => $".//div[@id='order_confirmation-wrapper']";
         #endregion
 
         [FindsBy(How = How.CssSelector, Using = "td.item")]
@@ -60,15 +61,8 @@ namespace CourseTasks
             wait.Until(ExpectedConditions.TextToBePresentInElement(element, text));
         }
         #endregion
-        public void RemoveAllProducts()
-        {
-            while (IsElementPresent(RemoveBtn))
-            {
-                driver.FindElement(By.CssSelector("[name=remove_cart_item]")).Click();
 
-            }
-        }
-
+      
         public bool CheckEmptyCart()
         {
             return IsElementPresent(EmptyCartLabel);
@@ -93,13 +87,26 @@ namespace CourseTasks
                 driver.FindElement(By.XPath(AddToCartBtn)).Click();
                 driver.FindElement(By.XPath(closeBtn)).Click();
                 WaitTextPresent(driver.FindElement(By.XPath(QtyinCart)), (count + 1).ToString());
-                 count++;
+                count++;
             }
 
             driver.FindElement(By.XPath(CheckOutBtn)).Click();
-            RemoveAllProducts();
-            CheckEmptyCart();
+      
+            if (IsElementPresent(OrderConfirmationWrapper))
+            {
+                var table = driver.FindElement(By.XPath(OrderConfirmationWrapper));
+                var counter = driver.FindElements(By.XPath(".//table[contains(@class,'data-table')]//tr[@class='item']")).Count - 1;
+                //because this path contains not only the goods in the table(3 ducks),
+                //but also the table header (Item Name Price Quantity Sum)
+                do
+                {
+                    wait.Until((IWebDriver d) => d.FindElements(By.XPath(".//table[contains(@class,'data-table')]//tr[@class='item']")).Count - 1 == counter);
+                    driver.FindElement(By.CssSelector("[name=remove_cart_item]")).Click();
+                    counter--;
+                } while (counter > 0);
+                wait.Until(ExpectedConditions.StalenessOf(table));
 
+            }
         }
 
         [ClassCleanup]
