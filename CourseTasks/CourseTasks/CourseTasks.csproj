@@ -78,6 +78,7 @@
     <Compile Include="Ex12.cs" />
     <Compile Include="Ex13.cs" />
     <Compile Include="Ex14.cs" />
+    <Compile Include="Ex17.cs" />
     <Compile Include="Ex7.cs" />
     <Compile Include="Ex8.cs" />
     <Compile Include="Ex9.cs" />
