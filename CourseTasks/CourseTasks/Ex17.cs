@@ -59,12 +59,13 @@ namespace CourseTasks
                 foreach (LogEntry l in driver.Manage().Logs.GetLog("browser"))
                 {
                     string message = l.Message;
-                    throw new Exception(string.Format("The message was in Log: {0}", message));
+                    Console.WriteLine(message);
                 }
                 j++;
                 driver.FindElement(By.XPath(CancelBtn)).Click();
             }
             while (j < allProducts.Count);
+
         }
 
         [ClassCleanup]
