@@ -50,6 +50,7 @@ namespace CourseTasks
             Thread.Sleep(10000);
             
             ReadOnlyCollection<IWebElement> allProducts;
+            int flag = 0;
             int j = 0;
             do
             {
@@ -60,11 +61,16 @@ namespace CourseTasks
                 {
                     string message = l.Message;
                     Console.WriteLine(message);
+                    flag++;
                 }
                 j++;
                 driver.FindElement(By.XPath(CancelBtn)).Click();
             }
             while (j < allProducts.Count);
+            if(flag>0)
+            {
+                Assert.Fail("Please see console. I find browser logs");
+            }
 
         }
 
