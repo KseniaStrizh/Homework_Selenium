@@ -12,7 +12,7 @@ namespace CourseTasks.Ex19
         private ProductListPage productListingPage;
         private ProductDetailsPage productDetailsPage;
 
-        private string siteUrl = "http://localhost/litecart/public_html/";
+        private string siteUrl = "http://localhost/litecart";
 
         public Application()
         {
