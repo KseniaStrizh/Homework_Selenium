@@ -1,31 +1,60 @@
-﻿using OpenQA.Selenium;
+﻿using System.Collections.Generic;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 
 namespace CourseTasks.Ex19
 {
-    public class LiteCartApp<TDriver> where TDriver : IWebDriver, new()
+    public class Application
     {
-        private MainPage storePage;
-        private ProductPage productPage;
-        private CartPage cartPage;
-
         private IWebDriver driver;
 
-        public LiteCartApp()
+        private CheckoutPage checkOutPage;
+        private ProductListPage productListingPage;
+        private ProductDetailsPage productDetailsPage;
+
+        private string siteUrl = "http://localhost/litecart/public_html/";
+
+        public Application()
         {
-            driver = new TDriver();
-            driver.Manage().Window.Maximize();
-            storePage = new MainPage(driver);
-            productPage = new ProductPage(driver);
-            cartPage = new CartPage(driver);
+            driver = new ChromeDriver();
+            checkOutPage = new CheckoutPage(driver);
+            productListingPage = new ProductListPage(driver);
+            productDetailsPage = new ProductDetailsPage(driver);
         }
-
-        public void OpenCart() => storePage.OpenCartPage();
-
-        public void ClearCart() => cartPage.RemoveAllItems();
+        #region siteOperations
 
         public void Quit()
         {
             driver.Quit();
         }
+
+        public void OpenSite()
+        {
+            driver.Navigate().GoToUrl(siteUrl);
+        }
+        #endregion
+
+        public void BuyProduct(Product product)
+        {
+            productListingPage.OpenProduct(product.Name);
+            productDetailsPage.SelectSize(product.Size);
+            productDetailsPage.AddToCart();
+        }
+
+        public void BuyProducts(List<Product> products)
+        {
+            foreach (var product in products)
+            {
+                this.OpenSite();
+                this.BuyProduct(product);
+            }
+        }
+
+        public void DeleteAllProducts()
+        {
+            productListingPage.OpenCart();
+            checkOutPage.DeleteAllItems();
+        }
     }
+
 }
